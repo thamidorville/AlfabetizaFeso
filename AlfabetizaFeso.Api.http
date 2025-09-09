@@ -1,0 +1,6 @@
+@AlfabetizaFeso.Api_HostAddress = http://localhost:5098
+
+GET {{AlfabetizaFeso.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
