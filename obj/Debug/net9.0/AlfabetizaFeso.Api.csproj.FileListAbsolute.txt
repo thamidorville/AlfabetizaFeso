@@ -131,3 +131,4 @@ C:\Users\thami\Documents\AlfabetizaFeso\AlfabetizaFeso.Api\obj\Debug\net9.0\refi
 C:\Users\thami\Documents\AlfabetizaFeso\AlfabetizaFeso.Api\obj\Debug\net9.0\AlfabetizaFeso.Api.pdb
 C:\Users\thami\Documents\AlfabetizaFeso\AlfabetizaFeso.Api\obj\Debug\net9.0\AlfabetizaFeso.Api.genruntimeconfig.cache
 C:\Users\thami\Documents\AlfabetizaFeso\AlfabetizaFeso.Api\obj\Debug\net9.0\ref\AlfabetizaFeso.Api.dll
+C:\Users\thami\Documents\AlfabetizaFeso\AlfabetizaFeso.Api\obj\Debug\net9.0\AlfabetizaFeso.Api.sourcelink.json

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AlfabetizaFeso.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+356484d6fcb72dada2ab108444acf62ee7c19474")]
 [assembly: System.Reflection.AssemblyProductAttribute("AlfabetizaFeso.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AlfabetizaFeso.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
