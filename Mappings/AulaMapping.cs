@@ -30,4 +30,19 @@ public static class AulaMapping
             DataFinalUtc = aulaRequest.DataFinal.ToUniversalTime(), 
         };
     }
+
+    // overload do metodo ToEntity para retornar entidade com id.
+    // util para quando for atualizar a entidade.
+    public static Aula ToEntity(this AulaRequest aulaRequest, int id)
+    {
+        return new Aula
+        {
+            Id = id,
+            Titulo = aulaRequest.Titulo,
+            Descricao = aulaRequest.Descricao,
+            EducadorId = aulaRequest.EducadorId,
+            DataInicioUtc = aulaRequest.DataInicio.ToUniversalTime(),
+            DataFinalUtc = aulaRequest.DataFinal.ToUniversalTime(),
+        };
+    }
 }

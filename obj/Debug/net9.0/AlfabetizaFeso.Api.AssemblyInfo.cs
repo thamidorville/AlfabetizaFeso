@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AlfabetizaFeso.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+77e86a3ef33ddd48175190e1fd1eadd4df1a23fe")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ad32a4ca915b88f3218aba9a0102c4a3f16736b1")]
 [assembly: System.Reflection.AssemblyProductAttribute("AlfabetizaFeso.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AlfabetizaFeso.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
