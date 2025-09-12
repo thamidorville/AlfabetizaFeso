@@ -20,7 +20,7 @@ namespace AlfabetizaFeso.Api.Repositories
             return await _contexto.Educadores.ToListAsync();
         }
 
-        public async Task<Educador> BuscarPorIdAsync(int id)
+        public async Task<Educador?> BuscarPorIdAsync(int id)
         {
             return await _contexto.Educadores.FindAsync(id);
         }

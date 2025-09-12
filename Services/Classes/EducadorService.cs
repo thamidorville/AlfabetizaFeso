@@ -1,7 +1,6 @@
-using AlfabetizaFeso.Api.Models;
+using AlfabetizaFeso.Api.DTOs.Educador;
 using AlfabetizaFeso.Api.Repositories;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using AlfabetizaFeso.Api.Mappings;
 
 namespace AlfabetizaFeso.Api.Services
 {
@@ -14,24 +13,37 @@ namespace AlfabetizaFeso.Api.Services
             _educadorRepository = educadorRepository;
         }
 
-        public async Task<IEnumerable<Educador>> ListarTodosAsync()
+        public async Task<IEnumerable<EducadorResponse>> ListarTodosAsync()
         {
-            return await _educadorRepository.ListarTodosAsync();
+            var educadores = await _educadorRepository.ListarTodosAsync();
+            List<EducadorResponse> educadoresResponse = educadores
+                .Select(e => e.ToDto())
+                .ToList();
+
+            return educadoresResponse;
         }
 
-        public async Task<Educador> BuscarPorIdAsync(int id)
+        public async Task<EducadorResponse?> BuscarPorIdAsync(int id)
         {
-            return await _educadorRepository.BuscarPorIdAsync(id);
+            var educador = await _educadorRepository.BuscarPorIdAsync(id);
+            if (educador is null)
+                return null;
+
+            return educador.ToDto();
         }
 
-        public async Task<Educador> AdicionarAsync(Educador educador)
+        public async Task<EducadorResponse> AdicionarAsync(EducadorRequest educadorRequest)
         {
-            return await _educadorRepository.AdicionarAsync(educador);
+            var educador = educadorRequest.ToEntity();
+            var educadorAdicionado =  await _educadorRepository.AdicionarAsync(educador);
+            return educadorAdicionado.ToDto();
         }
 
-        public async Task<Educador> AtualizarAsync(Educador educador)
+        public async Task<EducadorResponse> AtualizarAsync(EducadorRequest educadorRequest, int id)
         {
-            return await _educadorRepository.AtualizarAsync(educador);
+            var educador = educadorRequest.ToEntity(id);
+            var educadorAtualizado = await _educadorRepository.AtualizarAsync(educador);
+            return educadorAtualizado.ToDto();
         }
 
         public async Task<bool> RemoverAsync(int id)
