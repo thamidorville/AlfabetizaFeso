@@ -3288,11 +3288,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Estudos\\Unifeso\\Projeto de Desenvolvimento Web Backend\\AlfabetizaFeso\\AlfabetizaFeso.Api.csproj",
+      "projectUniqueName": "C:\\Users\\braga\\source\\repos\\AlfabetizaFeso\\AlfabetizaFeso.Api.csproj",
       "projectName": "AlfabetizaFeso.Api",
-      "projectPath": "D:\\Estudos\\Unifeso\\Projeto de Desenvolvimento Web Backend\\AlfabetizaFeso\\AlfabetizaFeso.Api.csproj",
+      "projectPath": "C:\\Users\\braga\\source\\repos\\AlfabetizaFeso\\AlfabetizaFeso.Api.csproj",
       "packagesPath": "C:\\Users\\braga\\.nuget\\packages\\",
-      "outputPath": "D:\\Estudos\\Unifeso\\Projeto de Desenvolvimento Web Backend\\AlfabetizaFeso\\obj\\",
+      "outputPath": "C:\\Users\\braga\\source\\repos\\AlfabetizaFeso\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -3379,7 +3379,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

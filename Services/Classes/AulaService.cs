@@ -6,40 +6,74 @@ using AlfabetizaFeso.Api.Services.Interfaces;
 
 namespace AlfabetizaFeso.Api.Services.Classes;
 
-public class AulaService(IAulaRepository aulaRepo) : IAulaService
+public class AulaService(IAulaRepository aulaRepo, IEducadorRepository educadorRepo) : IAulaService
 {
     private readonly IAulaRepository _aulaRepo = aulaRepo;
+    private readonly IEducadorRepository _educadorRepo = educadorRepo;
 
     public async Task<AulaResponse> AdicionarAsync(AulaRequest aulaRequest)
     {
+        await VerificaExistenciaEducadorAsync(aulaRequest.EducadorId);
+
         var aula = aulaRequest.ToEntity();
         var aulaAdicionada = await _aulaRepo.AdicionarAsync(aula);
-        
+
         return aulaAdicionada.ToDto();
     }
 
-    public Task<AulaResponse> AtualizarAsync(AulaRequest aulaRequest, int id)
+    public async Task<AulaResponse> AtualizarAsync(AulaRequest aulaRequest, int id)
     {
-        throw new NotImplementedException();
+        await VerificaExistenciaEducadorAsync(aulaRequest.EducadorId);
+
+        var aula = aulaRequest.ToEntity(id);
+        var aulaAtualizada = await _aulaRepo.AtualizarAsync(aula);
+
+        return aulaAtualizada.ToDto();
     }
 
-    public Task<AulaResponse?> BuscarPorIdAsync(int id)
+    public async Task<AulaResponse?> BuscarPorIdAsync(int id)
     {
-        throw new NotImplementedException();
+        var aula = await _aulaRepo.BuscarPorIdAsync(id);
+
+        if (aula != null)
+            return aula.ToDto();
+
+        return null;
     }
 
-    public Task<IEnumerable<AulaResponse>> ListarPorEducadorIdAsync()
+    public async Task<IEnumerable<AulaResponse>> ListarPorEducadorIdAsync(int educadorId)
     {
-        throw new NotImplementedException();
+        await VerificaExistenciaEducadorAsync(educadorId);
+
+        var aulas = await _aulaRepo.ListarPorEducadorId(educadorId);
+        List<AulaResponse> aulasResponse = aulas
+            .Select(a => a.ToDto())
+            .ToList();
+
+        return aulasResponse;
     }
 
-    public Task<IEnumerable<AulaResponse>> ListarTodosAsync()
+    public async Task<IEnumerable<AulaResponse>> ListarTodosAsync()
     {
-        throw new NotImplementedException();
+        var aulas = await _aulaRepo.ListarTodosAsync();
+        List<AulaResponse> aulasResponse = aulas
+            .Select(a => a.ToDto())
+            .ToList();
+
+        return aulasResponse;
     }
 
-    public Task<bool> RemoverAsync(int id)
+    public async Task<bool> RemoverAsync(int id)
     {
-        throw new NotImplementedException();
+        return await _aulaRepo.RemoverAsync(id);
+    }
+
+    private async Task VerificaExistenciaEducadorAsync(int educadorId)
+    {
+        var educador = await _educadorRepo.BuscarPorIdAsync(educadorId);
+        if (educador == null)
+        {
+            throw new KeyNotFoundException("Educador não encontrado.");
+        }
     }
 }

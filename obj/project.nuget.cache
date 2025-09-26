@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "toPW3ipwb2Y=",
+  "dgSpecHash": "9xSYz+T9ta4=",
   "success": true,
-  "projectFilePath": "D:\\Estudos\\Unifeso\\Projeto de Desenvolvimento Web Backend\\AlfabetizaFeso\\AlfabetizaFeso.Api.csproj",
+  "projectFilePath": "C:\\Users\\braga\\Source\\Repos\\AlfabetizaFeso\\AlfabetizaFeso.Api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\braga\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\braga\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.6\\microsoft.aspnetcore.openapi.9.0.6.nupkg.sha512",
