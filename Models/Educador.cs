@@ -8,5 +8,7 @@ namespace AlfabetizaFeso.Api.Models
         public string Email { get; set; } = string.Empty;
         public string Telefone { get; set; } = string.Empty;
         public string Descricao { get; set; } = string.Empty; // pequena bio/apresentação
+
+        public ICollection<Aula> AulasMinistradas { get; set; } = [];
     }
 }

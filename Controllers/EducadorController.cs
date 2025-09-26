@@ -1,6 +1,7 @@
-using AlfabetizaFeso.Api.Models;
+using AlfabetizaFeso.Api.DTOs.Educador;
 using AlfabetizaFeso.Api.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -18,14 +19,14 @@ namespace AlfabetizaFeso.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Educador>>> GetAll()
+        public async Task<ActionResult<IEnumerable<EducadorResponse>>> GetAll()
         {
             var educadores = await _educadorService.ListarTodosAsync();
             return Ok(educadores);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Educador>> GetById(int id)
+        public async Task<ActionResult<EducadorResponse>> GetById(int id)
         {
             var educador = await _educadorService.BuscarPorIdAsync(id);
             if (educador == null)
@@ -34,20 +35,30 @@ namespace AlfabetizaFeso.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Educador>> Create(Educador educador)
+        public async Task<ActionResult<EducadorResponse>> Create(EducadorRequest educadorRequest)
         {
-            var novoEducador = await _educadorService.AdicionarAsync(educador);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var novoEducador = await _educadorService.AdicionarAsync(educadorRequest);
             return CreatedAtAction(nameof(GetById), new { id = novoEducador.Id }, novoEducador);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Educador>> Update(int id, Educador educador)
+        public async Task<ActionResult<EducadorResponse>> Update(int id, EducadorRequest educadorRequest)
         {
-            if (id != educador.Id)
-                return BadRequest();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            var educadorAtualizado = await _educadorService.AtualizarAsync(educador);
-            return Ok(educadorAtualizado);
+            try
+            {
+                var educadorAtualizado = await _educadorService.AtualizarAsync(educadorRequest, id);
+                return Ok(educadorAtualizado);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return NotFound();
+            }
         }
 
         [HttpDelete("{id}")]

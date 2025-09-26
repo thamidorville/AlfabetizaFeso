@@ -1,4 +1,10 @@
 using AlfabetizaFeso.Api.Data;
+using AlfabetizaFeso.Api.Repositories;
+using AlfabetizaFeso.Api.Repository.Classes;
+using AlfabetizaFeso.Api.Repository.Interfaces;
+using AlfabetizaFeso.Api.Services;
+using AlfabetizaFeso.Api.Services.Classes;
+using AlfabetizaFeso.Api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,8 +14,10 @@ builder.Services.AddDbContext<AlfabetizaContexto>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Registrar dependências (Repository e Service)
-builder.Services.AddScoped<AlfabetizaFeso.Api.Repositories.IEducadorRepository, AlfabetizaFeso.Api.Repositories.EducadorRepository>();
-builder.Services.AddScoped<AlfabetizaFeso.Api.Services.IEducadorService, AlfabetizaFeso.Api.Services.EducadorService>();
+builder.Services.AddScoped<IEducadorRepository, EducadorRepository>();
+builder.Services.AddScoped<IAulaRepository, AulaRepository>();
+builder.Services.AddScoped<IEducadorService, EducadorService>();
+builder.Services.AddScoped<IAulaService, AulaService>();
 
 // Add services to the container
 builder.Services.AddControllers();
@@ -22,7 +30,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Minha API V1");
+        c.RoutePrefix = "";
+    });
 }
 
 app.UseHttpsRedirection();
