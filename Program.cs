@@ -30,6 +30,7 @@ builder.Services.AddSwaggerGen();
 // Adicionar serviços do JWT
 builder.Services.AddAuthentication(options =>
 {
+<<<<<<< Updated upstream
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
@@ -45,6 +46,18 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
     };
+=======
+    options.AddPolicy(corsPolicy, policy =>
+        policy.WithOrigins(
+            "http://localhost:5173", 
+                "http://127.0.0.1:5173",
+                "https://localhost:5173",  // Caso o frontend use HTTPS
+                "https://127.0.0.1:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+    );
+>>>>>>> Stashed changes
 });
 
 var app = builder.Build();
@@ -60,7 +73,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();   
