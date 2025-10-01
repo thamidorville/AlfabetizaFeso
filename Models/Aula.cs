@@ -10,4 +10,6 @@ public class Aula
 
     public int EducadorId { get; set; }
     public Educador? Educador { get; set; }
+
+    public ICollection<Inscricao> Inscricoes { get; set; } = [];
 }
