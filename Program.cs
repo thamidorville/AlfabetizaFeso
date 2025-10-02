@@ -20,8 +20,15 @@ builder.Services.AddDbContext<AlfabetizaContexto>(options =>
 // Registrar dependências (Repository e Service)
 builder.Services.AddScoped<IEducadorRepository, EducadorRepository>();
 builder.Services.AddScoped<IAulaRepository, AulaRepository>();
+builder.Services.AddScoped<IAlunoRepository, AlunoRepository>();
+builder.Services.AddScoped<IInscricaoRepository, InscricaoRepository>();
+
+// Registrar dependências (Service)
 builder.Services.AddScoped<IEducadorService, EducadorService>();
 builder.Services.AddScoped<IAulaService, AulaService>();
+builder.Services.AddScoped<IAlunoService, AlunoService>();
+builder.Services.AddScoped<IInscricaoService, InscricaoService>();
+
 
 // Add services to the container
 builder.Services.AddControllers();
@@ -54,9 +61,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy(corsPolicy, policy =>
         policy.WithOrigins(
             "http://localhost:5173",
-                "http://127.0.0.1:5173",
-                "https://localhost:5173",  // Caso o frontend use HTTPS
-                "https://127.0.0.1:5173")
+            "http://127.0.0.1:5173",
+            "https://localhost:5173",  // Caso o frontend use HTTPS
+            "https://127.0.0.1:5173")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials()
@@ -76,7 +83,9 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// app.UseHttpsRedirection();
+app.UseHttpsRedirection();
+
+app.UseCors(corsPolicy);
 
 app.UseAuthentication();
 app.UseAuthorization();   

@@ -1,10 +1,9 @@
 ﻿using AlfabetizaFeso.Api.DTOs.Aluno;
 using AlfabetizaFeso.Api.Models;
-using System.Runtime.CompilerServices;
 
 namespace AlfabetizaFeso.Api.Mappings;
 
-public class AlunoMapping
+public static class AlunoMapping
 {
     public static AlunoResponse ToDto(this Aluno aluno)
     {

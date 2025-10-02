@@ -2,8 +2,6 @@ using AlfabetizaFeso.Api.DTOs.Educador;
 using AlfabetizaFeso.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace AlfabetizaFeso.Api.Controllers
 {

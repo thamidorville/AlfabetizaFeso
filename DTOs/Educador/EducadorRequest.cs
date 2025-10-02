@@ -15,15 +15,15 @@ public class EducadorRequest
     public string Email { get; set; } = string.Empty;
 
 
-    [Required]
-    [MinLength(8)]
-    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$",
-            ErrorMessage = "A senha deve conter pelo menos uma letra maiúscula, uma minúscula, um número e um caractere especial.")]
-    public string Password { get; set; } = string.Empty;
+    //[Required]
+    //[MinLength(8)]
+    //[RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$",
+    //        ErrorMessage = "A senha deve conter pelo menos uma letra maiúscula, uma minúscula, um número e um caractere especial.")]
+    //public string Password { get; set; } = string.Empty;
 
-    [Required]
-    [Compare("Password")]
-    public string ConfirmPassword { get;set; } = string.Empty;
+    //[Required]
+    //[Compare("Password")]
+    //public string ConfirmPassword { get;set; } = string.Empty;
 
 
     [Required]
