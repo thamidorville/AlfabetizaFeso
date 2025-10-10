@@ -10,6 +10,7 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace AlfabetizaFeso.Api.Controllers
 {
@@ -50,7 +51,6 @@ namespace AlfabetizaFeso.Api.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
             try
             {
                 var novoEducador = await _educadorService.AdicionarAsync(educadorRequest);
