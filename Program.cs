@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,9 @@ builder.Services.AddScoped<IEducadorRepository, EducadorRepository>();
 builder.Services.AddScoped<IAulaRepository, AulaRepository>();
 builder.Services.AddScoped<IEducadorService, EducadorService>();
 builder.Services.AddScoped<IAulaService, AulaService>();
+
+// registrar PasswordHasher para educador
+builder.Services.AddScoped<IPasswordHasher<AlfabetizaFeso.Api.Models.Educador>, PasswordHasher<AlfabetizaFeso.Api.Models.Educador>>();
 
 // Add services to the container
 builder.Services.AddControllers();
@@ -77,7 +81,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // app.UseHttpsRedirection();
-
+app.UseCors(corsPolicy);
 app.UseAuthentication();
 app.UseAuthorization();   
 

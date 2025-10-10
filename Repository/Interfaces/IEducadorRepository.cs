@@ -8,6 +8,7 @@ namespace AlfabetizaFeso.Api.Repositories
     {
         Task<IEnumerable<Educador>> ListarTodosAsync();
         Task<Educador?> BuscarPorIdAsync(int id);
+        Task<Educador?> BuscarPorEmailAsync(string email);
         Task<Educador> AdicionarAsync(Educador educador);
         Task<Educador> AtualizarAsync(Educador educador);
         Task<bool> RemoverAsync(int id);
