@@ -40,6 +40,14 @@ namespace AlfabetizaFeso.Api.Services
         {
             var educador = educadorRequest.ToEntity();
 
+            // Normalizar email
+            educador.Email = educador.Email.Trim().ToLowerInvariant();
+
+            // Checar duplicado
+            var existente = await _educadorRepository.BuscarPorEmailAsync(educador.Email);
+            if (existente != null)
+                throw new InvalidOperationException("Email já cadastrado");
+
             // Hash da senha antes de salvar
             educador.PasswordHash = _hasher.HashPassword(educador, educadorRequest.Password);
 
@@ -60,8 +68,27 @@ namespace AlfabetizaFeso.Api.Services
 
         public async Task<EducadorResponse> AtualizarAsync(EducadorRequest educadorRequest, int id)
         {
-            var educador = educadorRequest.ToEntity(id);
-            var educadorAtualizado = await _educadorRepository.AtualizarAsync(educador);
+            var existente = await _educadorRepository.BuscarPorIdAsync(id);
+            if (existente == null)
+                throw new KeyNotFoundException("Educador não encontrado");
+
+            // Atualizar apenas campos permitidos
+            existente.Nome = educadorRequest.Nome;
+            existente.Especialidade = educadorRequest.Especialidade;
+            existente.Telefone = educadorRequest.Telefone;
+            existente.Descricao = educadorRequest.Descricao;
+
+            // Se o email mudou, normalizar e checar duplicado
+            var novoEmail = educadorRequest.Email.Trim().ToLowerInvariant();
+            if (!string.Equals(existente.Email, novoEmail, StringComparison.OrdinalIgnoreCase))
+            {
+                var outro = await _educadorRepository.BuscarPorEmailAsync(novoEmail);
+                if (outro != null && outro.Id != id)
+                    throw new InvalidOperationException("Email já cadastrado por outro usuário");
+                existente.Email = novoEmail;
+            }
+
+            var educadorAtualizado = await _educadorRepository.AtualizarAsync(existente);
             return educadorAtualizado.ToDto();
         }
 
