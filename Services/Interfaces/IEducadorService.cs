@@ -9,6 +9,7 @@ namespace AlfabetizaFeso.Api.Services
         Task<IEnumerable<EducadorResponse>> ListarTodosAsync();
         Task<EducadorResponse?> BuscarPorIdAsync(int id);
         Task<EducadorResponse> AdicionarAsync(EducadorRequest educadorRequest);
+        Task<EducadorResponse?> AuthenticateAsync(string email, string password);
         Task<EducadorResponse> AtualizarAsync(EducadorRequest educadorRequest, int id);
         Task<bool> RemoverAsync(int id);
     }

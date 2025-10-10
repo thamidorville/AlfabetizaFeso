@@ -1,9 +1,16 @@
 using AlfabetizaFeso.Api.DTOs.Educador;
 using AlfabetizaFeso.Api.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace AlfabetizaFeso.Api.Controllers
 {
@@ -12,13 +19,16 @@ namespace AlfabetizaFeso.Api.Controllers
     public class EducadorController : ControllerBase
     {
         private readonly IEducadorService _educadorService;
+        private readonly IConfiguration _configuration;
 
-        public EducadorController(IEducadorService educadorService)
+        public EducadorController(IEducadorService educadorService, IConfiguration configuration)
         {
             _educadorService = educadorService;
+            _configuration = configuration;
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<EducadorResponse>>> GetAll()
         {
             var educadores = await _educadorService.ListarTodosAsync();
@@ -26,6 +36,7 @@ namespace AlfabetizaFeso.Api.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<EducadorResponse>> GetById(int id)
         {
             var educador = await _educadorService.BuscarPorIdAsync(id);
@@ -34,18 +45,58 @@ namespace AlfabetizaFeso.Api.Controllers
             return Ok(educador);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<EducadorResponse>> Create(EducadorRequest educadorRequest)
+    [HttpPost]
+    [AllowAnonymous]
+    public async Task<ActionResult<EducadorResponse>> Create(EducadorRequest educadorRequest)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
-            var novoEducador = await _educadorService.AdicionarAsync(educadorRequest);
-            return CreatedAtAction(nameof(GetById), new { id = novoEducador.Id }, novoEducador);
+            try
+            {
+                var novoEducador = await _educadorService.AdicionarAsync(educadorRequest);
+                return CreatedAtAction(nameof(GetById), new { id = novoEducador.Id }, novoEducador);
+            }
+            catch (InvalidOperationException ex) when (ex.Message.Contains("Email já cadastrado"))
+            {
+                return Conflict(new { message = ex.Message });
+            }
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<EducadorResponse>> Update(int id, EducadorRequest educadorRequest)
+    [HttpPost("login")]
+    [AllowAnonymous]
+    public async Task<IActionResult> Login(EducadorLogin login)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var educador = await _educadorService.AuthenticateAsync(login.Email, login.Password);
+            if (educador == null) return Unauthorized();
+
+            // gerar JWT
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, educador.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, educador.Email),
+                new Claim("nome", educador.Nome)
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(6),
+                signingCredentials: creds
+            );
+
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return Ok(new { token = tokenString, expires = token.ValidTo });
+        }
+
+    [HttpPut("{id}")]
+    [Authorize]
+    public async Task<ActionResult<EducadorResponse>> Update(int id, EducadorRequest educadorRequest)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -61,8 +112,9 @@ namespace AlfabetizaFeso.Api.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+    [HttpDelete("{id}")]
+    [Authorize]
+    public async Task<IActionResult> Delete(int id)
         {
             var removido = await _educadorService.RemoverAsync(id);
             if (!removido)
