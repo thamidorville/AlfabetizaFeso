@@ -25,6 +25,13 @@ namespace AlfabetizaFeso.Api.Repositories
             return await _contexto.Educadores.FindAsync(id);
         }
 
+        public async Task<Educador?> BuscarPorEmailAsync(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email)) return null;
+            var normalized = email.Trim().ToLowerInvariant();
+            return await _contexto.Educadores.SingleOrDefaultAsync(e => e.Email.ToLower() == normalized);
+        }
+
         public async Task<Educador> AdicionarAsync(Educador educador)
         {
             _contexto.Educadores.Add(educador);
