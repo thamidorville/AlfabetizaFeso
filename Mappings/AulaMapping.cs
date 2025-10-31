@@ -19,13 +19,13 @@ public static class AulaMapping
         };
     }
 
-    public static Aula ToEntity(this AulaRequest aulaRequest)
+    public static Aula ToEntity(this AulaRequest aulaRequest, int educadorId)
     {
         return new Aula
         {
             Titulo = aulaRequest.Titulo,
             Descricao = aulaRequest.Descricao,
-            EducadorId = aulaRequest.EducadorId,
+            EducadorId = educadorId,
             DataInicioUtc = aulaRequest.DataInicio.ToUniversalTime(),
             DataFinalUtc = aulaRequest.DataFinal.ToUniversalTime(), 
         };
@@ -33,14 +33,14 @@ public static class AulaMapping
 
     // overload do metodo ToEntity para retornar entidade com id.
     // util para quando for atualizar a entidade.
-    public static Aula ToEntity(this AulaRequest aulaRequest, int id)
+    public static Aula ToEntity(this AulaRequest aulaRequest, int aulaId, int educadorId)
     {
         return new Aula
         {
-            Id = id,
+            Id = aulaId,
             Titulo = aulaRequest.Titulo,
             Descricao = aulaRequest.Descricao,
-            EducadorId = aulaRequest.EducadorId,
+            EducadorId = educadorId,
             DataInicioUtc = aulaRequest.DataInicio.ToUniversalTime(),
             DataFinalUtc = aulaRequest.DataFinal.ToUniversalTime(),
         };

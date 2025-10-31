@@ -10,21 +10,21 @@ public class AulaService(IAulaRepository aulaRepo, IUsuarioRepository usuarioRep
     private readonly IAulaRepository _aulaRepo = aulaRepo;
     private readonly IUsuarioRepository _usuarioRepo = usuarioRepo;
 
-    public async Task<AulaResponse> AdicionarAsync(AulaRequest aulaRequest)
+    public async Task<AulaResponse> AdicionarAsync(AulaRequest aulaRequest, int educadorId)
     {
-        await VerificaExistenciaEducadorAsync(aulaRequest.EducadorId);
+        await VerificaExistenciaEducadorAsync(educadorId);
 
-        var aula = aulaRequest.ToEntity();
+        var aula = aulaRequest.ToEntity(educadorId);
         var aulaAdicionada = await _aulaRepo.AdicionarAsync(aula);
 
         return aulaAdicionada.ToDto();
     }
 
-    public async Task<AulaResponse> AtualizarAsync(AulaRequest aulaRequest, int id)
+    public async Task<AulaResponse> AtualizarAsync(AulaRequest aulaRequest, int aulaId, int educadorId)
     {
-        await VerificaExistenciaEducadorAsync(aulaRequest.EducadorId);
+        await VerificaExistenciaEducadorAsync(educadorId);
 
-        var aula = aulaRequest.ToEntity(id);
+        var aula = aulaRequest.ToEntity(aulaId);
         var aulaAtualizada = await _aulaRepo.AtualizarAsync(aula);
 
         return aulaAtualizada.ToDto();

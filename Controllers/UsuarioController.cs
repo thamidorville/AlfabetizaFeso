@@ -1,5 +1,5 @@
 ﻿using AlfabetizaFeso.Api.DTOs.Usuario;
-using AlfabetizaFeso.Api.Services.Classes;
+using AlfabetizaFeso.Api.Extensions;
 using AlfabetizaFeso.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +8,6 @@ namespace AlfabetizaFeso.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize] // Protege por padrão; endpoints de registro/login liberados com [AllowAnonymous]
 public class UsuarioController : ControllerBase
 {
     private readonly IUsuarioService _usuarioService;
@@ -34,8 +33,20 @@ public class UsuarioController : ControllerBase
         return Ok(usuario);
     }
 
+    [HttpGet("me")]
+    [Authorize]
+    public async Task<ActionResult<UsuarioResponse>> GetMyUser()
+    {
+        if (User.GetUserId() is not int userId)
+            return Unauthorized();
+
+        var usuario = await _usuarioService.BuscarPorIdAsync(userId);
+        if (usuario == null)
+            return NotFound();
+        return Ok(usuario);
+    }
+
     [HttpPost("educador")]
-    [AllowAnonymous]
     public async Task<ActionResult<UsuarioResponse>> CreateEducador(EducadorRequest educadorRequest)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -52,7 +63,6 @@ public class UsuarioController : ControllerBase
     }
 
     [HttpPost("aluno")]
-    [AllowAnonymous]
     public async Task<ActionResult<UsuarioResponse>> CreateAluno(AlunoRequest alunoRequest)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -69,7 +79,6 @@ public class UsuarioController : ControllerBase
     }
 
     [HttpPost("login")]
-    [AllowAnonymous]
     public async Task<IActionResult> Login(UsuarioLogin login)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -80,14 +89,18 @@ public class UsuarioController : ControllerBase
         return Ok(new { usuario, token });
     }
 
-    [HttpPut("educador/{id}")]
-    public async Task<ActionResult<UsuarioResponse>> UpdateEducador(int id, EducadorUpdateRequest request)
+    [HttpPut("educador")]
+    [Authorize(Roles = "educador")]
+    public async Task<ActionResult<UsuarioResponse>> UpdateEducador(EducadorUpdateRequest request)
     {
+        if (User.GetUserId() is not int userId)
+            return Unauthorized();
+
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
         try
         {
-            var atualizado = await _usuarioService.AtualizarAsync(request, id);
+            var atualizado = await _usuarioService.AtualizarAsync(request, userId);
             return Ok(atualizado);
         }
         catch (InvalidOperationException ex)
@@ -96,14 +109,18 @@ public class UsuarioController : ControllerBase
         }
     }
 
-    [HttpPut("aluno/{id}")]
-    public async Task<ActionResult<UsuarioResponse>> UpdateAluno(int id, AlunoUpdateRequest request)
+    [HttpPut("aluno")]
+    [Authorize(Roles = "aluno")]
+    public async Task<ActionResult<UsuarioResponse>> UpdateAluno(AlunoUpdateRequest request)
     {
+        if (User.GetUserId() is not int userId)
+            return Unauthorized();
+
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
         try
         {
-            var atualizado = await _usuarioService.AtualizarAsync(request, id);
+            var atualizado = await _usuarioService.AtualizarAsync(request, userId);
             return Ok(atualizado);
         }
         catch (InvalidOperationException ex)
@@ -112,14 +129,18 @@ public class UsuarioController : ControllerBase
         }
     }
 
-    [HttpPut("{id}/senha")]
-    public async Task<IActionResult> AlterarSenha(int id, SenhaRequest senha)
+    [HttpPut("alterar-senha")]
+    [Authorize]
+    public async Task<IActionResult> AlterarSenha(SenhaRequest senha)
     {
+        if (User.GetUserId() is not int userId)
+            return Unauthorized();
+
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
         try
         {
-            var ok = await _usuarioService.AlterarSenhaAsync(id, senha);
+            var ok = await _usuarioService.AlterarSenhaAsync(userId, senha);
             if (!ok) return BadRequest("Senha atual inválida ou usuário não encontrado.");
             return NoContent();
         }
@@ -129,10 +150,14 @@ public class UsuarioController : ControllerBase
         }
     }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpDelete()]
+    [Authorize]
+    public async Task<IActionResult> Delete()
     {
-        var removido = await _usuarioService.RemoverAsync(id);
+        if (User.GetUserId() is not int userId)
+            return Unauthorized();
+
+        var removido = await _usuarioService.RemoverAsync(userId);
         if (!removido) return NotFound();
         return NoContent();
     }
