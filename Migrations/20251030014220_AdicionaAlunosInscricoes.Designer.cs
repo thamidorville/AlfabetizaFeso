@@ -3,6 +3,7 @@ using System;
 using AlfabetizaFeso.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AlfabetizaFeso.Api.Migrations
 {
     [DbContext(typeof(AlfabetizaContexto))]
-    partial class AlfabetizaContextoModelSnapshot : ModelSnapshot
+    [Migration("20251030014220_AdicionaAlunosInscricoes")]
+    partial class AdicionaAlunosInscricoes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,34 @@ namespace AlfabetizaFeso.Api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("AlfabetizaFeso.Api.Models.Aluno", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Descricao")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Telefone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Alunos");
+                });
 
             modelBuilder.Entity("AlfabetizaFeso.Api.Models.Aula", b =>
                 {
@@ -54,6 +85,46 @@ namespace AlfabetizaFeso.Api.Migrations
                     b.ToTable("Aulas");
                 });
 
+            modelBuilder.Entity("AlfabetizaFeso.Api.Models.Educador", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Especialidade")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Telefone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("Educadores");
+                });
+
             modelBuilder.Entity("AlfabetizaFeso.Api.Models.Inscricao", b =>
                 {
                     b.Property<int>("AlunoId")
@@ -69,48 +140,9 @@ namespace AlfabetizaFeso.Api.Migrations
                     b.ToTable("Inscricoes");
                 });
 
-            modelBuilder.Entity("AlfabetizaFeso.Api.Models.Usuario", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Descricao")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Especialidade")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("SenhaHash")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Telefone")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Usuarios");
-                });
-
             modelBuilder.Entity("AlfabetizaFeso.Api.Models.Aula", b =>
                 {
-                    b.HasOne("AlfabetizaFeso.Api.Models.Usuario", "Educador")
+                    b.HasOne("AlfabetizaFeso.Api.Models.Educador", "Educador")
                         .WithMany("AulasMinistradas")
                         .HasForeignKey("EducadorId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -121,8 +153,8 @@ namespace AlfabetizaFeso.Api.Migrations
 
             modelBuilder.Entity("AlfabetizaFeso.Api.Models.Inscricao", b =>
                 {
-                    b.HasOne("AlfabetizaFeso.Api.Models.Usuario", "Aluno")
-                        .WithMany()
+                    b.HasOne("AlfabetizaFeso.Api.Models.Aluno", "Aluno")
+                        .WithMany("Inscricoes")
                         .HasForeignKey("AlunoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -138,12 +170,17 @@ namespace AlfabetizaFeso.Api.Migrations
                     b.Navigation("Aula");
                 });
 
+            modelBuilder.Entity("AlfabetizaFeso.Api.Models.Aluno", b =>
+                {
+                    b.Navigation("Inscricoes");
+                });
+
             modelBuilder.Entity("AlfabetizaFeso.Api.Models.Aula", b =>
                 {
                     b.Navigation("Inscricoes");
                 });
 
-            modelBuilder.Entity("AlfabetizaFeso.Api.Models.Usuario", b =>
+            modelBuilder.Entity("AlfabetizaFeso.Api.Models.Educador", b =>
                 {
                     b.Navigation("AulasMinistradas");
                 });

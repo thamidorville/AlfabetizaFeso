@@ -1,16 +1,15 @@
 using AlfabetizaFeso.Api.Data;
-using AlfabetizaFeso.Api.Repositories;
 using AlfabetizaFeso.Api.Repository.Classes;
 using AlfabetizaFeso.Api.Repository.Interfaces;
 using AlfabetizaFeso.Api.Services;
 using AlfabetizaFeso.Api.Services.Classes;
 using AlfabetizaFeso.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,28 +17,60 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AlfabetizaContexto>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Registrar dependÃªncias (Repository e Service)
-builder.Services.AddScoped<IEducadorRepository, EducadorRepository>();
+// Registrar dependências (Repository e Service)
 builder.Services.AddScoped<IAulaRepository, AulaRepository>();
-builder.Services.AddScoped<IAlunoRepository, AlunoRepository>();
 builder.Services.AddScoped<IInscricaoRepository, InscricaoRepository>();
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
-// Registrar dependÃªncias (Service)
-builder.Services.AddScoped<IEducadorService, EducadorService>();
+// Registrar dependências (Service)
 builder.Services.AddScoped<IAulaService, AulaService>();
-builder.Services.AddScoped<IAlunoService, AlunoService>();
 builder.Services.AddScoped<IInscricaoService, InscricaoService>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 
-
-// registrar PasswordHasher para educador
-builder.Services.AddScoped<IPasswordHasher<AlfabetizaFeso.Api.Models.Educador>, PasswordHasher<AlfabetizaFeso.Api.Models.Educador>>();
+// registrar PasswordHasher para Usuario (usado pelo UsuarioService)
+builder.Services.AddScoped<IPasswordHasher<AlfabetizaFeso.Api.Models.Usuario>, PasswordHasher<AlfabetizaFeso.Api.Models.Usuario>>();
 
 // Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
-// Adicionar serviÃ§os do JWT
+// Configurar Swagger para aceitar JWT Bearer
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Minha API V1", Version = "v1" });
+
+    var securityScheme = new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Description = "Digite: Bearer {seu token JWT aqui}",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
+    };
+
+    c.AddSecurityDefinition("Bearer", securityScheme);
+
+    var securityRequirement = new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    };
+
+    c.AddSecurityRequirement(securityRequirement);
+});
+
+
+// Adicionar serviços do JWT
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -66,7 +97,7 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
             "http://localhost:5173",
                 "http://127.0.0.1:5173",
-                "https://localhost:5173",  // Caso o frontend use HTTPS
+                "https://localhost:5173",
                 "https://127.0.0.1:5173")
             .AllowAnyHeader()
             .AllowAnyMethod()
@@ -92,7 +123,7 @@ app.UseHttpsRedirection();
 app.UseCors(corsPolicy);
 
 app.UseAuthentication();
-app.UseAuthorization();   
+app.UseAuthorization();
 
 app.MapControllers();
 

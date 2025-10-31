@@ -3,6 +3,7 @@ using System;
 using AlfabetizaFeso.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AlfabetizaFeso.Api.Migrations
 {
     [DbContext(typeof(AlfabetizaContexto))]
-    partial class AlfabetizaContextoModelSnapshot : ModelSnapshot
+    [Migration("20251030222812_TablePerHierarchyUsers")]
+    partial class TablePerHierarchyUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,14 +87,7 @@ namespace AlfabetizaFeso.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Especialidade")
-                        .HasColumnType("text");
-
                     b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -111,7 +107,7 @@ namespace AlfabetizaFeso.Api.Migrations
             modelBuilder.Entity("AlfabetizaFeso.Api.Models.Aula", b =>
                 {
                     b.HasOne("AlfabetizaFeso.Api.Models.Usuario", "Educador")
-                        .WithMany("AulasMinistradas")
+                        .WithMany()
                         .HasForeignKey("EducadorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -141,11 +137,6 @@ namespace AlfabetizaFeso.Api.Migrations
             modelBuilder.Entity("AlfabetizaFeso.Api.Models.Aula", b =>
                 {
                     b.Navigation("Inscricoes");
-                });
-
-            modelBuilder.Entity("AlfabetizaFeso.Api.Models.Usuario", b =>
-                {
-                    b.Navigation("AulasMinistradas");
                 });
 #pragma warning restore 612, 618
         }

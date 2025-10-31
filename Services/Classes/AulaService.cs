@@ -1,15 +1,14 @@
 ﻿using AlfabetizaFeso.Api.DTOs.Aula;
 using AlfabetizaFeso.Api.Mappings;
-using AlfabetizaFeso.Api.Repositories;
 using AlfabetizaFeso.Api.Repository.Interfaces;
 using AlfabetizaFeso.Api.Services.Interfaces;
 
 namespace AlfabetizaFeso.Api.Services.Classes;
 
-public class AulaService(IAulaRepository aulaRepo, IEducadorRepository educadorRepo) : IAulaService
+public class AulaService(IAulaRepository aulaRepo, IUsuarioRepository usuarioRepo) : IAulaService
 {
     private readonly IAulaRepository _aulaRepo = aulaRepo;
-    private readonly IEducadorRepository _educadorRepo = educadorRepo;
+    private readonly IUsuarioRepository _usuarioRepo = usuarioRepo;
 
     public async Task<AulaResponse> AdicionarAsync(AulaRequest aulaRequest)
     {
@@ -70,7 +69,7 @@ public class AulaService(IAulaRepository aulaRepo, IEducadorRepository educadorR
 
     private async Task VerificaExistenciaEducadorAsync(int educadorId)
     {
-        var educador = await _educadorRepo.BuscarPorIdAsync(educadorId);
+        var educador = await _usuarioRepo.BuscarPorIdAsync(educadorId);
         if (educador == null)
         {
             throw new KeyNotFoundException("Educador não encontrado.");
