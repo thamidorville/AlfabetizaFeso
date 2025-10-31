@@ -17,7 +17,7 @@ namespace AlfabetizaFeso.Api.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("ProductVersion", "9.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -54,7 +54,22 @@ namespace AlfabetizaFeso.Api.Migrations
                     b.ToTable("Aulas");
                 });
 
-            modelBuilder.Entity("AlfabetizaFeso.Api.Models.Educador", b =>
+            modelBuilder.Entity("AlfabetizaFeso.Api.Models.Inscricao", b =>
+                {
+                    b.Property<int>("AlunoId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("AulaId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("AlunoId", "AulaId");
+
+                    b.HasIndex("AulaId");
+
+                    b.ToTable("Inscricoes");
+                });
+
+            modelBuilder.Entity("AlfabetizaFeso.Api.Models.Usuario", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -63,7 +78,6 @@ namespace AlfabetizaFeso.Api.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Descricao")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
@@ -71,14 +85,17 @@ namespace AlfabetizaFeso.Api.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Especialidade")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("PasswordHash")
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SenhaHash")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -88,12 +105,12 @@ namespace AlfabetizaFeso.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Educadores");
+                    b.ToTable("Usuarios");
                 });
 
             modelBuilder.Entity("AlfabetizaFeso.Api.Models.Aula", b =>
                 {
-                    b.HasOne("AlfabetizaFeso.Api.Models.Educador", "Educador")
+                    b.HasOne("AlfabetizaFeso.Api.Models.Usuario", "Educador")
                         .WithMany("AulasMinistradas")
                         .HasForeignKey("EducadorId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -102,7 +119,31 @@ namespace AlfabetizaFeso.Api.Migrations
                     b.Navigation("Educador");
                 });
 
-            modelBuilder.Entity("AlfabetizaFeso.Api.Models.Educador", b =>
+            modelBuilder.Entity("AlfabetizaFeso.Api.Models.Inscricao", b =>
+                {
+                    b.HasOne("AlfabetizaFeso.Api.Models.Usuario", "Aluno")
+                        .WithMany()
+                        .HasForeignKey("AlunoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AlfabetizaFeso.Api.Models.Aula", "Aula")
+                        .WithMany("Inscricoes")
+                        .HasForeignKey("AulaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Aluno");
+
+                    b.Navigation("Aula");
+                });
+
+            modelBuilder.Entity("AlfabetizaFeso.Api.Models.Aula", b =>
+                {
+                    b.Navigation("Inscricoes");
+                });
+
+            modelBuilder.Entity("AlfabetizaFeso.Api.Models.Usuario", b =>
                 {
                     b.Navigation("AulasMinistradas");
                 });

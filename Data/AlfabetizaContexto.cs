@@ -9,16 +9,14 @@ namespace AlfabetizaFeso.Api.Data
         {
         }
 
-        public DbSet<Educador> Educadores { get; set; }
-        public DbSet<Aula> Aulas { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; } = null!;
+        public DbSet<Aula> Aulas { get; set; } = null!;
+        public DbSet<Inscricao> Inscricoes { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Educador>()
-                .HasIndex(e => e.Email)
-                .IsUnique();
-
-            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Inscricao>()
+                .HasKey(i => new { i.AlunoId, i.AulaId });
         }
     }
 }
