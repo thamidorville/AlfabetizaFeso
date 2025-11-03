@@ -1,4 +1,4 @@
-﻿using AlfabetizaFeso.Api.DTOs.Usuario;
+using AlfabetizaFeso.Api.DTOs.Usuario;
 using AlfabetizaFeso.Api.Models;
 
 namespace AlfabetizaFeso.Api.Mappings;
@@ -6,7 +6,7 @@ namespace AlfabetizaFeso.Api.Mappings;
 public static class UsuarioMapping
 {
     // ====== CRIAÇÃO ======
-    public static Usuario ToEntity(this EducadorRequest req)
+    public static Usuario ToEntity(this EducadorCadastro req)
     {
         return new Usuario
         {
@@ -20,7 +20,7 @@ public static class UsuarioMapping
         };
     }
 
-    public static Usuario ToEntity(this AlunoRequest req)
+    public static Usuario ToEntity(this AlunoCadastro req)
     {
         return new Usuario
         {
@@ -33,8 +33,8 @@ public static class UsuarioMapping
         };
     }
 
-    // ====== ATUALIZAÇÃO (aplica campos do DTO na entidade existente, sem tocar SenhaHash) ======
-    public static void UpdateFrom(this Usuario target, EducadorUpdateRequest src)
+    // ====== ATUALIZAÇÃO ======
+    public static void UpdateFrom(this Usuario target, EducadorEditar src)
     {
         // Email é tratado explicitamente no serviço (normalização/verificação)
         target.Nome = src.Nome;
@@ -43,7 +43,7 @@ public static class UsuarioMapping
         target.Especialidade = src.Especialidade;
     }
 
-    public static void UpdateFrom(this Usuario target, AlunoUpdateRequest src)
+    public static void UpdateFrom(this Usuario target, AlunoEditar src)
     {
         // Email é tratado explicitamente no serviço (normalização/verificação)
         target.Nome = src.Nome;

@@ -1,6 +1,6 @@
 ﻿namespace AlfabetizaFeso.Api.DTOs.Aula;
 
-public class AulaRequest
+public class AulaCadastro
 {
     public required string Titulo { get; set; }
     public required string Descricao { get; set; }

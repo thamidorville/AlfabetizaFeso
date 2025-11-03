@@ -28,18 +28,47 @@ public class UsuarioService(
             .ToList();
     }
 
+    public async Task<IEnumerable<EducadorLista>> ListarEducadoresAsync()
+    {
+        var educadores = await _usuarioRepository.ListarTodosEducadoresAsync();
+        return educadores
+            .Select(e => new EducadorLista
+            {
+                Id = e.Id,
+                Nome = e.Nome,
+                Especialidade = e.Especialidade!,
+                Email = e.Email,
+                Descricao = e.Descricao
+            })
+            .ToList();
+    }
+
+    public async Task<IEnumerable<AlunoLista>> ListarAlunosAsync()
+    {
+        var alunos = await _usuarioRepository.ListarTodosAlunosAsync();
+        return alunos
+            .Select(a => new AlunoLista
+            {
+                Id = a.Id,
+                Nome = a.Nome,
+                Email = a.Email,
+                Descricao = a.Descricao
+            })
+            .ToList();
+    }
+
     public async Task<UsuarioResponse> BuscarPorIdAsync(int id)
     {
         var usuario = await _usuarioRepository.BuscarPorIdAsync(id);
         return usuario.ToDto()!;
     }
 
-    public async Task<UsuarioResponse> AdicionarAsync(EducadorRequest educadorRequest)
+    public async Task<UsuarioResponse> AdicionarAsync(EducadorCadastro educadorCadastro)
     {
-        if (educadorRequest.Senha != educadorRequest.ConfirmarSenha)
+        if (educadorCadastro.Senha != educadorCadastro.ConfirmarSenha)
             throw new Exception("As senhas não conferem");
 
-        var usuario = educadorRequest.ToEntity();
+        var usuario = educadorCadastro.ToEntity();
 
         // Normalizar email
         usuario.Email = usuario.Email.Trim().ToLowerInvariant();
@@ -50,17 +79,17 @@ public class UsuarioService(
             throw new InvalidOperationException("Email já cadastrado");
 
         // Hash da senha antes de salvar
-        usuario.SenhaHash = _hasher.HashPassword(usuario, educadorRequest.Senha);
+        usuario.SenhaHash = _hasher.HashPassword(usuario, educadorCadastro.Senha);
         var adicionado = await _usuarioRepository.AdicionarAsync(usuario);
         return adicionado.ToDto()!;
     }
 
-    public async Task<UsuarioResponse> AdicionarAsync(AlunoRequest alunoRequest)
+    public async Task<UsuarioResponse> AdicionarAsync(AlunoCadastro alunoCadastro)
     {
-        if (alunoRequest.Senha != alunoRequest.ConfirmarSenha)
+        if (alunoCadastro.Senha != alunoCadastro.ConfirmarSenha)
             throw new InvalidOperationException("As senhas não conferem");
 
-        var usuario = alunoRequest.ToEntity();
+        var usuario = alunoCadastro.ToEntity();
 
         // Normalizar email
         usuario.Email = usuario.Email.Trim().ToLowerInvariant();
@@ -71,7 +100,7 @@ public class UsuarioService(
             throw new InvalidOperationException("Email já cadastrado");
 
         // Hash da senha antes de salvar
-        usuario.SenhaHash = _hasher.HashPassword(usuario, alunoRequest.Senha);
+        usuario.SenhaHash = _hasher.HashPassword(usuario, alunoCadastro.Senha);
         var adicionado = await _usuarioRepository.AdicionarAsync(usuario);
         return adicionado.ToDto()!;
     }
@@ -108,12 +137,12 @@ public class UsuarioService(
         return (usuarioResponse, tokenString);
     }
 
-    public async Task<bool> AlterarSenhaAsync(int id, SenhaRequest senha)
+    public async Task<bool> AlterarSenhaAsync(int id, SenhaEditar senha)
     {
         var usuario = await _usuarioRepository.BuscarPorIdAsync(id);
         if (usuario is null) return false;
 
-        var result = _hasher.VerifyHashedPassword(usuario, usuario.SenhaHash, senha.SenhaAntiga);
+        var result = _hasher.VerifyHashedPassword(usuario, usuario.SenhaHash, senha.SenhaAtual);
         if (result == PasswordVerificationResult.Failed) return false;
 
         if (senha.SenhaNova != senha.ConfirmarSenha)
@@ -125,7 +154,7 @@ public class UsuarioService(
         return true;
     }
 
-    public async Task<UsuarioResponse> AtualizarAsync(EducadorUpdateRequest educadorRequest, int id)
+    public async Task<UsuarioResponse> AtualizarAsync(EducadorEditar educadorEditar, int id)
     {
         var usuarioExistente = await _usuarioRepository.BuscarPorIdAsync(id);
 
@@ -133,7 +162,7 @@ public class UsuarioService(
             throw new InvalidOperationException("O usuário informado não é um educador.");
 
         // Se o email mudou, normalizar e checar duplicado
-        var novoEmail = educadorRequest.Email.Trim().ToLowerInvariant();
+        var novoEmail = educadorEditar.Email.Trim().ToLowerInvariant();
         if (!string.Equals(usuarioExistente.Email, novoEmail, StringComparison.OrdinalIgnoreCase))
         {
             var outro = await _usuarioRepository.BuscarPorEmailAsync(novoEmail);
@@ -142,13 +171,13 @@ public class UsuarioService(
             usuarioExistente.Email = novoEmail;
         }
 
-        usuarioExistente.UpdateFrom(educadorRequest);
+        usuarioExistente.UpdateFrom(educadorEditar);
         usuarioExistente.Role = "educador"; // garantir role
         var atualizado = await _usuarioRepository.AtualizarAsync(usuarioExistente);
         return atualizado.ToDto()!;
     }
 
-    public async Task<UsuarioResponse> AtualizarAsync(AlunoUpdateRequest alunoRequest, int id)
+    public async Task<UsuarioResponse> AtualizarAsync(AlunoEditar alunoEditar, int id)
     {
         var usuarioExistente = await _usuarioRepository.BuscarPorIdAsync(id);
 
@@ -156,7 +185,7 @@ public class UsuarioService(
             throw new InvalidOperationException("O usuário informado não é um aluno.");
 
         // Se o email mudou, normalizar e checar duplicado
-        var novoEmail = alunoRequest.Email.Trim().ToLowerInvariant();
+        var novoEmail = alunoEditar.Email.Trim().ToLowerInvariant();
         if (!string.Equals(usuarioExistente.Email, novoEmail, StringComparison.OrdinalIgnoreCase))
         {
             var outroUsuario = await _usuarioRepository.BuscarPorEmailAsync(novoEmail);
@@ -166,7 +195,7 @@ public class UsuarioService(
             usuarioExistente.Email = novoEmail;
         }
 
-        usuarioExistente.UpdateFrom(alunoRequest);
+        usuarioExistente.UpdateFrom(alunoEditar);
         usuarioExistente.Role = "aluno"; // garantir role
         await _usuarioRepository.AtualizarAsync(usuarioExistente);
         return usuarioExistente.ToDto()!;

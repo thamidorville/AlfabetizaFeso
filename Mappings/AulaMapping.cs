@@ -1,4 +1,4 @@
-﻿using AlfabetizaFeso.Api.DTOs.Aula;
+using AlfabetizaFeso.Api.DTOs.Aula;
 using AlfabetizaFeso.Api.Models;
 using System.Runtime.CompilerServices;
 
@@ -19,30 +19,28 @@ public static class AulaMapping
         };
     }
 
-    public static Aula ToEntity(this AulaRequest aulaRequest, int educadorId)
+    public static Aula ToEntity(this AulaCadastro aulaCadastro, int educadorId)
     {
         return new Aula
         {
-            Titulo = aulaRequest.Titulo,
-            Descricao = aulaRequest.Descricao,
+            Titulo = aulaCadastro.Titulo,
+            Descricao = aulaCadastro.Descricao,
             EducadorId = educadorId,
-            DataInicioUtc = aulaRequest.DataInicio.ToUniversalTime(),
-            DataFinalUtc = aulaRequest.DataFinal.ToUniversalTime(), 
+            DataInicioUtc = aulaCadastro.DataInicio.ToUniversalTime(),
+            DataFinalUtc = aulaCadastro.DataFinal.ToUniversalTime()
         };
     }
 
-    // overload do metodo ToEntity para retornar entidade com id.
-    // util para quando for atualizar a entidade.
-    public static Aula ToEntity(this AulaRequest aulaRequest, int aulaId, int educadorId)
+    public static Aula ToEntity(this AulaCadastro aulaCadastro, int aulaId, int educadorId)
     {
         return new Aula
         {
             Id = aulaId,
-            Titulo = aulaRequest.Titulo,
-            Descricao = aulaRequest.Descricao,
+            Titulo = aulaCadastro.Titulo,
+            Descricao = aulaCadastro.Descricao,
             EducadorId = educadorId,
-            DataInicioUtc = aulaRequest.DataInicio.ToUniversalTime(),
-            DataFinalUtc = aulaRequest.DataFinal.ToUniversalTime(),
+            DataInicioUtc = aulaCadastro.DataInicio.ToUniversalTime(),
+            DataFinalUtc = aulaCadastro.DataFinal.ToUniversalTime()
         };
     }
 }

@@ -72,7 +72,7 @@ public class AulaController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "educador")]
-    public async Task<ActionResult<AulaResponse>> Create(AulaRequest aulaRequest)
+    public async Task<ActionResult<AulaResponse>> Create(AulaCadastro aulaCadastro)
     {
         if (User.GetUserId() is not int educadorId)
             return Unauthorized();
@@ -82,7 +82,7 @@ public class AulaController : ControllerBase
 
         try
         {
-            var novaAula = await _aulaService.AdicionarAsync(aulaRequest, educadorId);
+            var novaAula = await _aulaService.AdicionarAsync(aulaCadastro, educadorId);
             return CreatedAtAction(nameof(GetById), new { id = novaAula.Id }, novaAula);
         }
         catch (KeyNotFoundException ex)
@@ -93,7 +93,7 @@ public class AulaController : ControllerBase
 
     [HttpPut("{id}")]
     [Authorize(Roles = "educador")]
-    public async Task<ActionResult<AulaResponse>> Update(int aulaId, AulaRequest aulaRequest)
+    public async Task<ActionResult<AulaResponse>> Update(int aulaId, AulaCadastro aulaCadastro)
     {
         if(User.GetUserId() is not int educadorId)
             return Unauthorized();
@@ -104,7 +104,7 @@ public class AulaController : ControllerBase
 
         try
         {
-            var aulaAtualizada = await _aulaService.AtualizarAsync(aulaRequest, aulaId, educadorId);
+            var aulaAtualizada = await _aulaService.AtualizarAsync(aulaCadastro, aulaId, educadorId);
             return Ok(aulaAtualizada);
         }
         catch (KeyNotFoundException ex)

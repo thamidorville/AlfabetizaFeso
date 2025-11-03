@@ -1,4 +1,4 @@
-﻿using AlfabetizaFeso.Api.DTOs.Aula;
+using AlfabetizaFeso.Api.DTOs.Aula;
 using AlfabetizaFeso.Api.Mappings;
 using AlfabetizaFeso.Api.Repository.Interfaces;
 using AlfabetizaFeso.Api.Services.Interfaces;
@@ -10,21 +10,21 @@ public class AulaService(IAulaRepository aulaRepo, IUsuarioRepository usuarioRep
     private readonly IAulaRepository _aulaRepo = aulaRepo;
     private readonly IUsuarioRepository _usuarioRepo = usuarioRepo;
 
-    public async Task<AulaResponse> AdicionarAsync(AulaRequest aulaRequest, int educadorId)
+    public async Task<AulaResponse> AdicionarAsync(AulaCadastro aulaCadastro, int educadorId)
     {
         await VerificaExistenciaEducadorAsync(educadorId);
 
-        var aula = aulaRequest.ToEntity(educadorId);
+        var aula = aulaCadastro.ToEntity(educadorId);
         var aulaAdicionada = await _aulaRepo.AdicionarAsync(aula);
 
         return aulaAdicionada.ToDto();
     }
 
-    public async Task<AulaResponse> AtualizarAsync(AulaRequest aulaRequest, int aulaId, int educadorId)
+    public async Task<AulaResponse> AtualizarAsync(AulaCadastro aulaCadastro, int aulaId, int educadorId)
     {
         await VerificaExistenciaEducadorAsync(educadorId);
 
-        var aula = aulaRequest.ToEntity(aulaId);
+        var aula = aulaCadastro.ToEntity(aulaId, educadorId);
         var aulaAtualizada = await _aulaRepo.AtualizarAsync(aula);
 
         return aulaAtualizada.ToDto();

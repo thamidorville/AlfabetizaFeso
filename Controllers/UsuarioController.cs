@@ -46,14 +46,28 @@ public class UsuarioController : ControllerBase
         return Ok(usuario);
     }
 
+    [HttpGet("educadores")]
+    public async Task<ActionResult<IEnumerable<EducadorLista>>> GetEducadores()
+    {
+        var educadores = await _usuarioService.ListarEducadoresAsync();
+        return Ok(educadores);
+    }
+
+    [HttpGet("alunos")]
+    public async Task<ActionResult<IEnumerable<AlunoLista>>> GetAlunos()
+    {
+        var alunos = await _usuarioService.ListarAlunosAsync();
+        return Ok(alunos);
+    }
+
     [HttpPost("educador")]
-    public async Task<ActionResult<UsuarioResponse>> CreateEducador(EducadorRequest educadorRequest)
+    public async Task<ActionResult<UsuarioResponse>> CreateEducador(EducadorCadastro educadorCadastro)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
         try
         {
-            var novo = await _usuarioService.AdicionarAsync(educadorRequest);
+            var novo = await _usuarioService.AdicionarAsync(educadorCadastro);
             return CreatedAtAction(nameof(GetById), new { id = novo.Id }, novo);
         }
         catch (InvalidOperationException ex) when (ex.Message.Contains("Email já cadastrado") || ex.Message.Contains("senhas"))
@@ -63,13 +77,13 @@ public class UsuarioController : ControllerBase
     }
 
     [HttpPost("aluno")]
-    public async Task<ActionResult<UsuarioResponse>> CreateAluno(AlunoRequest alunoRequest)
+    public async Task<ActionResult<UsuarioResponse>> CreateAluno(AlunoCadastro alunoCadastro)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
         try
         {
-            var novo = await _usuarioService.AdicionarAsync(alunoRequest);
+            var novo = await _usuarioService.AdicionarAsync(alunoCadastro);
             return CreatedAtAction(nameof(GetById), new { id = novo.Id }, novo);
         }
         catch (InvalidOperationException ex) when (ex.Message.Contains("Email já cadastrado") || ex.Message.Contains("senhas"))
@@ -91,7 +105,7 @@ public class UsuarioController : ControllerBase
 
     [HttpPut("educador")]
     [Authorize(Roles = "educador")]
-    public async Task<ActionResult<UsuarioResponse>> UpdateEducador(EducadorUpdateRequest request)
+    public async Task<ActionResult<UsuarioResponse>> UpdateEducador(EducadorEditar educadorEditar)
     {
         if (User.GetUserId() is not int userId)
             return Unauthorized();
@@ -100,7 +114,7 @@ public class UsuarioController : ControllerBase
 
         try
         {
-            var atualizado = await _usuarioService.AtualizarAsync(request, userId);
+            var atualizado = await _usuarioService.AtualizarAsync(educadorEditar, userId);
             return Ok(atualizado);
         }
         catch (InvalidOperationException ex)
@@ -111,7 +125,7 @@ public class UsuarioController : ControllerBase
 
     [HttpPut("aluno")]
     [Authorize(Roles = "aluno")]
-    public async Task<ActionResult<UsuarioResponse>> UpdateAluno(AlunoUpdateRequest request)
+    public async Task<ActionResult<UsuarioResponse>> UpdateAluno(AlunoEditar alunoEditar)
     {
         if (User.GetUserId() is not int userId)
             return Unauthorized();
@@ -120,7 +134,7 @@ public class UsuarioController : ControllerBase
 
         try
         {
-            var atualizado = await _usuarioService.AtualizarAsync(request, userId);
+            var atualizado = await _usuarioService.AtualizarAsync(alunoEditar, userId);
             return Ok(atualizado);
         }
         catch (InvalidOperationException ex)
@@ -131,7 +145,7 @@ public class UsuarioController : ControllerBase
 
     [HttpPut("alterar-senha")]
     [Authorize]
-    public async Task<IActionResult> AlterarSenha(SenhaRequest senha)
+    public async Task<IActionResult> AlterarSenha(SenhaEditar senha)
     {
         if (User.GetUserId() is not int userId)
             return Unauthorized();

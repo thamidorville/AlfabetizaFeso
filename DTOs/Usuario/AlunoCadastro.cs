@@ -2,7 +2,7 @@
 
 namespace AlfabetizaFeso.Api.DTOs.Usuario;
 
-public class AlunoRequest
+public class AlunoCadastro
 {
     [Required]
     public required string Nome { get; set; }

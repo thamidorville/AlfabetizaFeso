@@ -2,7 +2,7 @@
 
 namespace AlfabetizaFeso.Api.DTOs.Usuario;
 
-public class SenhaRequest
+public class SenhaEditar
 {
     [Required]
     [MinLength(8)]

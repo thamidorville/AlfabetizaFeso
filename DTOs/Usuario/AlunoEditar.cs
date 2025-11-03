@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace AlfabetizaFeso.Api.DTOs.Usuario;
 
-public class AlunoUpdateRequest
+public class AlunoEditar
 {
-    [Required]
+    [Required(ErrorMessage = "O nome é obrigatório")]
     public required string Nome { get; set; } 
 
     [Required]
