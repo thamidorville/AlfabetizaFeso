@@ -1,7 +1,4 @@
 using AlfabetizaFeso.Api.Data;
-
-// Configurar DateTime para PostgreSQL
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 using AlfabetizaFeso.Api.Repository.Classes;
 using AlfabetizaFeso.Api.Repository.Interfaces;
 using AlfabetizaFeso.Api.Services;
@@ -13,6 +10,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
+using AlfabetizaFeso.Api.Converters;
+
+// Configurar DateTime para PostgreSQL
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,13 +21,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AlfabetizaContexto>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Registrar depend�ncias (Repository e Service)
+// Registrar dependncias (Repository e Service)
 builder.Services.AddScoped<IAulaRepository, AulaRepository>();
 builder.Services.AddScoped<IInscricaoRepository, InscricaoRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<ICursoRepository, CursoRepository>();
 
-// Registrar depend�ncias (Service)
+// Registrar dependncias (Service)
 builder.Services.AddScoped<IAulaService, AulaService>();
 builder.Services.AddScoped<IInscricaoService, InscricaoService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
@@ -39,8 +40,8 @@ builder.Services.AddScoped<IPasswordHasher<AlfabetizaFeso.Api.Models.Usuario>, P
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.Converters.Add(new AlfabetizaFeso.Api.Converters.DateTimeConverter());
-        options.JsonSerializerOptions.Converters.Add(new AlfabetizaFeso.Api.Converters.NullableDateTimeConverter());
+        options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
+        options.JsonSerializerOptions.Converters.Add(new NullableDateTimeConverter());
     });
 builder.Services.AddEndpointsApiExplorer();
 
@@ -80,7 +81,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 
-// Adicionar servi�os do JWT
+// Adicionar servios do JWT
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
