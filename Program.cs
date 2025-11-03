@@ -1,4 +1,7 @@
 using AlfabetizaFeso.Api.Data;
+
+// Configurar DateTime para PostgreSQL
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 using AlfabetizaFeso.Api.Repository.Classes;
 using AlfabetizaFeso.Api.Repository.Interfaces;
 using AlfabetizaFeso.Api.Services;
@@ -33,7 +36,12 @@ builder.Services.AddScoped<ICursoService, CursoService>();
 builder.Services.AddScoped<IPasswordHasher<AlfabetizaFeso.Api.Models.Usuario>, PasswordHasher<AlfabetizaFeso.Api.Models.Usuario>>();
 
 // Add services to the container
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new AlfabetizaFeso.Api.Converters.DateTimeConverter());
+        options.JsonSerializerOptions.Converters.Add(new AlfabetizaFeso.Api.Converters.NullableDateTimeConverter());
+    });
 builder.Services.AddEndpointsApiExplorer();
 
 // Configurar Swagger para aceitar JWT Bearer
