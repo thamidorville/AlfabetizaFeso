@@ -142,7 +142,7 @@ public class UsuarioService(
         var usuario = await _usuarioRepository.BuscarPorIdAsync(id);
         if (usuario is null) return false;
 
-        var result = _hasher.VerifyHashedPassword(usuario, usuario.SenhaHash, senha.SenhaAtual);
+        var result = _hasher.VerifyHashedPassword(usuario, usuario.SenhaHash, senha.SenhaAntiga);
         if (result == PasswordVerificationResult.Failed) return false;
 
         if (senha.SenhaNova != senha.ConfirmarSenha)
