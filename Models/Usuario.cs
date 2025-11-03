@@ -17,6 +17,6 @@ public class Usuario
     // Propriedade específica do educador (mantida aqui pois Aluno e Educador foram unificados)
     public string? Especialidade { get; set; }
 
-    // Navegação: aulas ministradas (válida quando Role == "educador")
-    public ICollection<Aula> AulasMinistradas { get; set; } = new List<Aula>();
+    // Auditoria
+    public DateTime DataCriacao { get; set; } = DateTime.UtcNow;
 }

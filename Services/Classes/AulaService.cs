@@ -1,78 +1,93 @@
 using AlfabetizaFeso.Api.DTOs.Aula;
-using AlfabetizaFeso.Api.Mappings;
+using AlfabetizaFeso.Api.Models;
 using AlfabetizaFeso.Api.Repository.Interfaces;
 using AlfabetizaFeso.Api.Services.Interfaces;
 
 namespace AlfabetizaFeso.Api.Services.Classes;
 
-public class AulaService(IAulaRepository aulaRepo, IUsuarioRepository usuarioRepo) : IAulaService
+public class AulaService(IAulaRepository aulaRepository, ICursoRepository cursoRepository) : IAulaService
 {
-    private readonly IAulaRepository _aulaRepo = aulaRepo;
-    private readonly IUsuarioRepository _usuarioRepo = usuarioRepo;
+    private readonly IAulaRepository _aulaRepository = aulaRepository;
+    private readonly ICursoRepository _cursoRepository = cursoRepository;
 
-    public async Task<AulaResponse> AdicionarAsync(AulaCadastro aulaCadastro, int educadorId)
+    public async Task<IEnumerable<AulaResponse>> ListarPorCursoAsync(int cursoId)
     {
-        await VerificaExistenciaEducadorAsync(educadorId);
-
-        var aula = aulaCadastro.ToEntity(educadorId);
-        var aulaAdicionada = await _aulaRepo.AdicionarAsync(aula);
-
-        return aulaAdicionada.ToDto();
-    }
-
-    public async Task<AulaResponse> AtualizarAsync(AulaCadastro aulaCadastro, int aulaId, int educadorId)
-    {
-        await VerificaExistenciaEducadorAsync(educadorId);
-
-        var aula = aulaCadastro.ToEntity(aulaId, educadorId);
-        var aulaAtualizada = await _aulaRepo.AtualizarAsync(aula);
-
-        return aulaAtualizada.ToDto();
+        var aulas = await _aulaRepository.ListarPorCursoAsync(cursoId);
+        return aulas.Select(ToDto);
     }
 
     public async Task<AulaResponse?> BuscarPorIdAsync(int id)
     {
-        var aula = await _aulaRepo.BuscarPorIdAsync(id);
-
-        if (aula != null)
-            return aula.ToDto();
-
-        return null;
+        var aula = await _aulaRepository.BuscarPorIdAsync(id);
+        return aula != null ? ToDto(aula) : null;
     }
 
-    public async Task<IEnumerable<AulaResponse>> ListarPorEducadorIdAsync(int educadorId)
+    public async Task<AulaResponse> AdicionarAsync(AulaCadastro aulaCadastro, int cursoId, int educadorId)
     {
-        await VerificaExistenciaEducadorAsync(educadorId);
+        var curso = await _cursoRepository.BuscarPorIdAsync(cursoId);
+        if (curso == null || curso.EducadorId != educadorId)
+            throw new InvalidOperationException("Curso não encontrado ou você não tem permissão para adicionar aulas");
 
-        var aulas = await _aulaRepo.ListarPorEducadorId(educadorId);
-        List<AulaResponse> aulasResponse = aulas
-            .Select(a => a.ToDto())
-            .ToList();
-
-        return aulasResponse;
-    }
-
-    public async Task<IEnumerable<AulaResponse>> ListarTodosAsync()
-    {
-        var aulas = await _aulaRepo.ListarTodosAsync();
-        List<AulaResponse> aulasResponse = aulas
-            .Select(a => a.ToDto())
-            .ToList();
-
-        return aulasResponse;
-    }
-
-    public async Task<bool> RemoverAsync(int id)
-    {
-        return await _aulaRepo.RemoverAsync(id);
-    }
-
-    private async Task VerificaExistenciaEducadorAsync(int educadorId)
-    {
-        var educador = await _usuarioRepo.BuscarPorIdAsync(educadorId);
-        if (educador == null)
+        var aula = new Aula
         {
-            throw new KeyNotFoundException("Educador não encontrado.");
-        }
+            Titulo = aulaCadastro.Titulo,
+            Descricao = aulaCadastro.Descricao,
+            DataInicio = aulaCadastro.DataInicio,
+            DataFinal = aulaCadastro.DataFinal,
+            CursoId = cursoId,
+            EducadorId = educadorId
+        };
+
+        var adicionada = await _aulaRepository.AdicionarAsync(aula);
+        return ToDto(adicionada);
+    }
+
+    public async Task<AulaResponse> AtualizarAsync(int id, AulaCadastro aulaCadastro, int cursoId, int educadorId)
+    {
+        var aula = await _aulaRepository.BuscarPorIdAsync(id);
+        if (aula == null || aula.CursoId != cursoId)
+            throw new InvalidOperationException("Aula não encontrada");
+
+        var curso = await _cursoRepository.BuscarPorIdAsync(cursoId);
+        if (curso == null || curso.EducadorId != educadorId)
+            throw new InvalidOperationException("Você não tem permissão para editar esta aula");
+
+        aula.Titulo = aulaCadastro.Titulo;
+        aula.Descricao = aulaCadastro.Descricao;
+        aula.DataInicio = aulaCadastro.DataInicio;
+        aula.DataFinal = aulaCadastro.DataFinal;
+
+        var atualizada = await _aulaRepository.AtualizarAsync(aula);
+        return ToDto(atualizada);
+    }
+
+    public async Task<bool> RemoverAsync(int id, int cursoId, int educadorId)
+    {
+        var aula = await _aulaRepository.BuscarPorIdAsync(id);
+        if (aula == null || aula.CursoId != cursoId)
+            return false;
+
+        var curso = await _cursoRepository.BuscarPorIdAsync(cursoId);
+        if (curso == null || curso.EducadorId != educadorId)
+            return false;
+
+        await _aulaRepository.RemoverAsync(aula);
+        return true;
+    }
+
+    private static AulaResponse ToDto(Aula aula)
+    {
+        return new AulaResponse
+        {
+            Id = aula.Id,
+            Titulo = aula.Titulo,
+            Descricao = aula.Descricao,
+            DataInicio = aula.DataInicio,
+            DataFinal = aula.DataFinal,
+            CursoId = aula.CursoId,
+            EducadorId = aula.EducadorId,
+            NomeCurso = aula.Curso?.Nome,
+            NomeEducador = aula.Educador?.Nome
+        };
     }
 }

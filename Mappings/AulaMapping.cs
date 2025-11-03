@@ -1,6 +1,5 @@
 using AlfabetizaFeso.Api.DTOs.Aula;
 using AlfabetizaFeso.Api.Models;
-using System.Runtime.CompilerServices;
 
 namespace AlfabetizaFeso.Api.Mappings;
 
@@ -13,34 +12,25 @@ public static class AulaMapping
             Id = aula.Id,
             Titulo = aula.Titulo,
             Descricao = aula.Descricao,
+            DataInicio = aula.DataInicio,
+            DataFinal = aula.DataFinal,
+            CursoId = aula.CursoId,
             EducadorId = aula.EducadorId,
-            DataInicioUtc = aula.DataInicioUtc,
-            DataFinalUtc = aula.DataFinalUtc
+            NomeCurso = aula.Curso?.Nome,
+            NomeEducador = aula.Educador?.Nome
         };
     }
 
-    public static Aula ToEntity(this AulaCadastro aulaCadastro, int educadorId)
+    public static Aula ToEntity(this AulaCadastro aulaCadastro, int cursoId, int educadorId)
     {
         return new Aula
         {
             Titulo = aulaCadastro.Titulo,
             Descricao = aulaCadastro.Descricao,
-            EducadorId = educadorId,
-            DataInicioUtc = aulaCadastro.DataInicio.ToUniversalTime(),
-            DataFinalUtc = aulaCadastro.DataFinal.ToUniversalTime()
-        };
-    }
-
-    public static Aula ToEntity(this AulaCadastro aulaCadastro, int aulaId, int educadorId)
-    {
-        return new Aula
-        {
-            Id = aulaId,
-            Titulo = aulaCadastro.Titulo,
-            Descricao = aulaCadastro.Descricao,
-            EducadorId = educadorId,
-            DataInicioUtc = aulaCadastro.DataInicio.ToUniversalTime(),
-            DataFinalUtc = aulaCadastro.DataFinal.ToUniversalTime()
+            DataInicio = aulaCadastro.DataInicio,
+            DataFinal = aulaCadastro.DataFinal,
+            CursoId = cursoId,
+            EducadorId = educadorId
         };
     }
 }

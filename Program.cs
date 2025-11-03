@@ -17,15 +17,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AlfabetizaContexto>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Registrar dependências (Repository e Service)
+// Registrar dependï¿½ncias (Repository e Service)
 builder.Services.AddScoped<IAulaRepository, AulaRepository>();
 builder.Services.AddScoped<IInscricaoRepository, InscricaoRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<ICursoRepository, CursoRepository>();
 
-// Registrar dependências (Service)
+// Registrar dependï¿½ncias (Service)
 builder.Services.AddScoped<IAulaService, AulaService>();
 builder.Services.AddScoped<IInscricaoService, InscricaoService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+builder.Services.AddScoped<ICursoService, CursoService>();
 
 // registrar PasswordHasher para Usuario (usado pelo UsuarioService)
 builder.Services.AddScoped<IPasswordHasher<AlfabetizaFeso.Api.Models.Usuario>, PasswordHasher<AlfabetizaFeso.Api.Models.Usuario>>();
@@ -70,7 +72,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 
-// Adicionar serviços do JWT
+// Adicionar serviï¿½os do JWT
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

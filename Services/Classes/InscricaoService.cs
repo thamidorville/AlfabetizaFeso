@@ -27,6 +27,7 @@ public class InscricaoService(IInscricaoRepository inscricaoRepository, IUsuario
         {
             AlunoId = alunoId,
             AulaId = aulaId,
+            Status = "ativa"
         };
 
         await _inscricaoRepository.AdicionarAsync(inscricao);

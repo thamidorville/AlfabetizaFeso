@@ -1,58 +1,49 @@
-﻿using AlfabetizaFeso.Api.Data;
+using AlfabetizaFeso.Api.Data;
 using AlfabetizaFeso.Api.Models;
 using AlfabetizaFeso.Api.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace AlfabetizaFeso.Api.Repository.Classes;
 
-public class AulaRepository(AlfabetizaContexto contexto) : IAulaRepository
+public class AulaRepository(AlfabetizaContexto context) : IAulaRepository
 {
-    private readonly AlfabetizaContexto _contexto = contexto;
+    private readonly AlfabetizaContexto _context = context;
+
+    public async Task<IEnumerable<Aula>> ListarPorCursoAsync(int cursoId)
+    {
+        return await _context.Aulas
+            .Include(a => a.Curso)
+            .Include(a => a.Educador)
+            .Where(a => a.CursoId == cursoId)
+            .OrderBy(a => a.DataInicio)
+            .ToListAsync();
+    }
+
+    public async Task<Aula?> BuscarPorIdAsync(int id)
+    {
+        return await _context.Aulas
+            .Include(a => a.Curso)
+            .Include(a => a.Educador)
+            .FirstOrDefaultAsync(a => a.Id == id);
+    }
 
     public async Task<Aula> AdicionarAsync(Aula aula)
     {
-        _contexto.Aulas.Add(aula);
-        await _contexto.SaveChangesAsync();
-
+        _context.Aulas.Add(aula);
+        await _context.SaveChangesAsync();
         return aula;
     }
 
     public async Task<Aula> AtualizarAsync(Aula aula)
     {
-        _contexto.Update(aula);
-        await _contexto.SaveChangesAsync();
-
+        _context.Aulas.Update(aula);
+        await _context.SaveChangesAsync();
         return aula;
     }
 
-    public async Task<Aula?> BuscarPorIdAsync(int id)
+    public async Task RemoverAsync(Aula aula)
     {
-        return await _contexto.Aulas.FindAsync(id);
-    }
-
-    public async Task<IEnumerable<Aula>> ListarPorEducadorId(int educadorId)
-    {
-        var aulas = await _contexto.Aulas
-            .Include(a => a.Educador)
-            .Where(a => a.EducadorId == educadorId)
-            .ToListAsync();
-
-        return aulas;
-    }
-
-    public async Task<IEnumerable<Aula>> ListarTodosAsync()
-    {
-        return await _contexto.Aulas.ToListAsync();
-    }
-
-    public async Task<bool> RemoverAsync(int id)
-    {
-        var aula = await _contexto.Aulas.FindAsync(id);
-        if (aula == null)
-            return false;
-
-        _contexto.Aulas.Remove(aula);
-        await _contexto.SaveChangesAsync();
-        return true;
+        _context.Aulas.Remove(aula);
+        await _context.SaveChangesAsync();
     }
 }
