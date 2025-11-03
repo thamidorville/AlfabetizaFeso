@@ -5,7 +5,7 @@ public class UsuarioResponse
     public int Id { get; set; }
     public required string Nome { get; set; } 
     public string? Especialidade { get; set; }
-    public required string Tipo { get; set; }
+    public required string Role { get; set; }
     public required string Email { get; set; } 
     public required string Telefone { get; set; } 
     public string? Descricao { get; set; } 

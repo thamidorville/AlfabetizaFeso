@@ -64,7 +64,7 @@ public static class UsuarioMapping
             Telefone = usuario.Telefone,
             Descricao = usuario.Descricao,
             Especialidade = usuario.Especialidade,
-            Tipo = string.Equals(usuario.Role, "educador", StringComparison.OrdinalIgnoreCase) ? "Educador" : "Aluno"
+            Role = usuario.Role
         };
 
         return dto;
