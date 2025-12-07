@@ -3,6 +3,7 @@ using System;
 using AlfabetizaFeso.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AlfabetizaFeso.Api.Migrations
 {
     [DbContext(typeof(AlfabetizaContexto))]
-    partial class AlfabetizaContextoModelSnapshot : ModelSnapshot
+    [Migration("20251203183724_FixingRelationsFromCursos")]
+    partial class FixingRelationsFromCursos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,9 +49,6 @@ namespace AlfabetizaFeso.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("LinkAula")
-                        .HasColumnType("text");
-
                     b.Property<string>("Titulo")
                         .IsRequired()
                         .HasColumnType("text");
@@ -67,6 +67,9 @@ namespace AlfabetizaFeso.Api.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CargaHoraria")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("DataCriacao")
                         .HasColumnType("timestamp without time zone");

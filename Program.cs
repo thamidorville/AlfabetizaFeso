@@ -26,12 +26,14 @@ builder.Services.AddScoped<IAulaRepository, AulaRepository>();
 builder.Services.AddScoped<IInscricaoRepository, InscricaoRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<ICursoRepository, CursoRepository>();
+builder.Services.AddScoped<IPresencaAulaRepository, PresencaAulaRepository>();
 
 // Registrar dependncias (Service)
 builder.Services.AddScoped<IAulaService, AulaService>();
 builder.Services.AddScoped<IInscricaoService, InscricaoService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<ICursoService, CursoService>();
+builder.Services.AddScoped<IPresencaAulaService, PresencaAulaService>();
 
 // registrar PasswordHasher para Usuario (usado pelo UsuarioService)
 builder.Services.AddScoped<IPasswordHasher<AlfabetizaFeso.Api.Models.Usuario>, PasswordHasher<AlfabetizaFeso.Api.Models.Usuario>>();
@@ -91,10 +93,6 @@ builder.Services.AddAuthentication(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),

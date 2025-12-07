@@ -18,38 +18,46 @@ public class InscricaoRepository(AlfabetizaContexto context) : IInscricaoReposit
         return inscricao;
     }
 
-    public async Task<Inscricao?> ObterInscricaoAsync(int alunoId, int aulaId)
+    public async Task<Inscricao?> ObterInscricaoAsync(int alunoId, int cursoId)
     {
         var inscricao = await _inscricaoDbSet
-            .FirstOrDefaultAsync(i => i.AlunoId == alunoId && i.AulaId == aulaId);
+            .FirstOrDefaultAsync(i => i.AlunoId == alunoId && i.CursoId == cursoId);
 
         return inscricao;
+    }
+
+    public async Task<Inscricao?> BuscarPorIdAsync(int id)
+    {
+        return await _inscricaoDbSet
+            .Include(i => i.Aluno)
+            .Include(i => i.Curso)
+            .FirstOrDefaultAsync(i => i.Id == id);
     }
 
     public async Task<IEnumerable<Inscricao>> ObterInscricoesPorAlunoIdAsync(int id)
     {
         var inscricoes = await _inscricaoDbSet
             .Where(i => i.AlunoId == id)
-            .Include(i => i.Aula)
+            .Include(i => i.Curso)
             .ToListAsync();
 
         return inscricoes;
     }
 
-    public async Task<IEnumerable<Inscricao>> ObterInscricoesPorAulaIdAsync(int id)
+    public async Task<IEnumerable<Inscricao>> ObterInscricoesPorCursoIdAsync(int cursoId)
     {
         var inscricoes = await _inscricaoDbSet
-            .Where(i => i.AulaId == id)
+            .Where(i => i.CursoId == cursoId)
             .Include(i => i.Aluno)
             .ToListAsync();
 
         return inscricoes;
     }
 
-    public async Task<bool> RemoverAsync(int alunoId, int aulaId)
+    public async Task<bool> RemoverAsync(int alunoId, int cursoId)
     {
         var inscricao = await _inscricaoDbSet
-            .FirstOrDefaultAsync(i => i.AlunoId == alunoId && i.AulaId == aulaId);
+            .FirstOrDefaultAsync(i => i.AlunoId == alunoId && i.CursoId == cursoId);
         if (inscricao == null)
             return false;
 

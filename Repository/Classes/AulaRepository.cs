@@ -13,7 +13,6 @@ public class AulaRepository(AlfabetizaContexto context) : IAulaRepository
     {
         return await _context.Aulas
             .Include(a => a.Curso)
-            .Include(a => a.Educador)
             .Where(a => a.CursoId == cursoId)
             .OrderBy(a => a.DataInicio)
             .ToListAsync();
@@ -23,7 +22,6 @@ public class AulaRepository(AlfabetizaContexto context) : IAulaRepository
     {
         return await _context.Aulas
             .Include(a => a.Curso)
-            .Include(a => a.Educador)
             .FirstOrDefaultAsync(a => a.Id == id);
     }
 

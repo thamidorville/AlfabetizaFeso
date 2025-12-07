@@ -1,4 +1,5 @@
 using AlfabetizaFeso.Api.DTOs.Curso;
+using AlfabetizaFeso.Api.DTOs.Aula;
 using AlfabetizaFeso.Api.Extensions;
 using AlfabetizaFeso.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -11,10 +12,12 @@ namespace AlfabetizaFeso.Api.Controllers;
 public class CursoController : ControllerBase
 {
     private readonly ICursoService _cursoService;
+    private readonly IAulaService _aulaService;
 
-    public CursoController(ICursoService cursoService)
+    public CursoController(ICursoService cursoService, IAulaService aulaService)
     {
         _cursoService = cursoService;
+        _aulaService = aulaService;
     }
 
     [HttpGet]
@@ -38,6 +41,13 @@ public class CursoController : ControllerBase
     {
         var cursos = await _cursoService.ListarPorEducadorAsync(educadorId);
         return Ok(cursos);
+    }
+
+    [HttpGet("educador/{educadorId}/aulas")]
+    public async Task<ActionResult<IEnumerable<AulaResponse>>> GetAulasByEducador(int educadorId)
+    {
+        var aulas = await _aulaService.ListarPorEducadorAsync(educadorId);
+        return Ok(aulas);
     }
 
     [HttpGet("meus-cursos")]

@@ -12,9 +12,6 @@ public class CursoCadastro
     [StringLength(500)]
     public required string Descricao { get; set; }
 
-    [Range(1, 1000)]
-    public int CargaHoraria { get; set; }
-
     [Required]
     public DateTime DataInicio { get; set; }
 

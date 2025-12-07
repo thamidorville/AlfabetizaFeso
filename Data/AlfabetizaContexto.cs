@@ -13,10 +13,10 @@ namespace AlfabetizaFeso.Api.Data
         public DbSet<Curso> Cursos { get; set; } = null!;
         public DbSet<Aula> Aulas { get; set; } = null!;
         public DbSet<Inscricao> Inscricoes { get; set; } = null!;
+        public DbSet<PresencaAula> PresencasAula { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Configurar relacionamentos
             modelBuilder.Entity<Curso>()
                 .HasOne(c => c.Educador)
                 .WithMany()
@@ -28,12 +28,6 @@ namespace AlfabetizaFeso.Api.Data
                 .WithMany(c => c.Aulas)
                 .HasForeignKey(a => a.CursoId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<Aula>()
-                .HasOne(a => a.Educador)
-                .WithMany()
-                .HasForeignKey(a => a.EducadorId)
-                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Inscricao>()
                 .HasOne(i => i.Aluno)
@@ -47,16 +41,17 @@ namespace AlfabetizaFeso.Api.Data
                 .HasForeignKey(i => i.CursoId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Inscricao>()
-                .HasOne(i => i.Aula)
+            modelBuilder.Entity<PresencaAula>()
+                .HasOne(p => p.Inscricao)
                 .WithMany()
-                .HasForeignKey(i => i.AulaId)
+                .HasForeignKey(p => p.InscricaoId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Constraint: deve ter OU CursoId OU AulaId, mas não ambos
-            modelBuilder.Entity<Inscricao>()
-                .ToTable(t => t.HasCheckConstraint("CK_Inscricao_CursoOuAula", 
-                    "(\"CursoId\" IS NOT NULL AND \"AulaId\" IS NULL) OR (\"CursoId\" IS NULL AND \"AulaId\" IS NOT NULL)"));
+            modelBuilder.Entity<PresencaAula>()
+                .HasOne(p => p.Aula)
+                .WithMany()
+                .HasForeignKey(p => p.AulaId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -9,4 +9,5 @@ public interface IAulaService
     Task<AulaResponse> AdicionarAsync(AulaCadastro aulaCadastro, int cursoId, int educadorId);
     Task<AulaResponse> AtualizarAsync(int id, AulaCadastro aulaCadastro, int cursoId, int educadorId);
     Task<bool> RemoverAsync(int id, int cursoId, int educadorId);
+    Task<IEnumerable<AulaResponse>> ListarPorEducadorAsync(int educadorId);
 }

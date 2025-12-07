@@ -1,7 +1,12 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using AlfabetizaFeso.Api.DTOs.Aula;
 using AlfabetizaFeso.Api.Models;
 using AlfabetizaFeso.Api.Repository.Interfaces;
 using AlfabetizaFeso.Api.Services.Interfaces;
+using AlfabetizaFeso.Api.Mappings;
 
 namespace AlfabetizaFeso.Api.Services.Classes;
 
@@ -13,13 +18,13 @@ public class AulaService(IAulaRepository aulaRepository, ICursoRepository cursoR
     public async Task<IEnumerable<AulaResponse>> ListarPorCursoAsync(int cursoId)
     {
         var aulas = await _aulaRepository.ListarPorCursoAsync(cursoId);
-        return aulas.Select(ToDto);
+        return aulas.Select(a => a.ToDto());
     }
 
     public async Task<AulaResponse?> BuscarPorIdAsync(int id)
     {
         var aula = await _aulaRepository.BuscarPorIdAsync(id);
-        return aula != null ? ToDto(aula) : null;
+        return aula != null ? aula.ToDto() : null;
     }
 
     public async Task<AulaResponse> AdicionarAsync(AulaCadastro aulaCadastro, int cursoId, int educadorId)
@@ -35,11 +40,11 @@ public class AulaService(IAulaRepository aulaRepository, ICursoRepository cursoR
             DataInicio = aulaCadastro.DataInicio,
             DataFinal = aulaCadastro.DataFinal,
             CursoId = cursoId,
-            EducadorId = educadorId
+            LinkAula = aulaCadastro.LinkAula
         };
 
         var adicionada = await _aulaRepository.AdicionarAsync(aula);
-        return ToDto(adicionada);
+        return adicionada.ToDto();
     }
 
     public async Task<AulaResponse> AtualizarAsync(int id, AulaCadastro aulaCadastro, int cursoId, int educadorId)
@@ -56,9 +61,10 @@ public class AulaService(IAulaRepository aulaRepository, ICursoRepository cursoR
         aula.Descricao = aulaCadastro.Descricao;
         aula.DataInicio = aulaCadastro.DataInicio;
         aula.DataFinal = aulaCadastro.DataFinal;
+        aula.LinkAula = aulaCadastro.LinkAula;
 
         var atualizada = await _aulaRepository.AtualizarAsync(aula);
-        return ToDto(atualizada);
+        return atualizada.ToDto();
     }
 
     public async Task<bool> RemoverAsync(int id, int cursoId, int educadorId)
@@ -75,19 +81,18 @@ public class AulaService(IAulaRepository aulaRepository, ICursoRepository cursoR
         return true;
     }
 
-    private static AulaResponse ToDto(Aula aula)
+    public async Task<IEnumerable<AulaResponse>> ListarPorEducadorAsync(int educadorId)
     {
-        return new AulaResponse
-        {
-            Id = aula.Id,
-            Titulo = aula.Titulo,
-            Descricao = aula.Descricao,
-            DataInicio = aula.DataInicio,
-            DataFinal = aula.DataFinal,
-            CursoId = aula.CursoId,
-            EducadorId = aula.EducadorId,
-            NomeCurso = aula.Curso?.Nome,
-            NomeEducador = aula.Educador?.Nome
-        };
+        var cursos = await _cursoRepository.ListarPorEducadorAsync(educadorId);
+
+        var aulas = cursos
+            .Where(c => c.Aulas != null)
+            .SelectMany(c => c.Aulas)
+            .GroupBy(a => a.Id)
+            .Select(g => g.First())
+            .OrderBy(a => a.DataInicio)
+            .Select(a => a.ToDto());
+
+        return aulas;
     }
 }

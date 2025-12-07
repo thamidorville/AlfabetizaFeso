@@ -15,4 +15,6 @@ public class AulaCadastro
 
     [Required]
     public DateTime DataFinal { get; set; }
+
+    public string? LinkAula { get; set; }
 }

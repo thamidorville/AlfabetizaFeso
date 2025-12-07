@@ -5,7 +5,6 @@ public class Curso
     public int Id { get; set; }
     public required string Nome { get; set; }
     public required string Descricao { get; set; }
-    public int CargaHoraria { get; set; }
     public DateTime DataInicio { get; set; }
     public DateTime? DataFim { get; set; }
     public required string Status { get; set; } = "ativo"; // ativo, inativo, concluido

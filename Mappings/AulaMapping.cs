@@ -15,13 +15,12 @@ public static class AulaMapping
             DataInicio = aula.DataInicio,
             DataFinal = aula.DataFinal,
             CursoId = aula.CursoId,
-            EducadorId = aula.EducadorId,
             NomeCurso = aula.Curso?.Nome,
-            NomeEducador = aula.Educador?.Nome
+            LinkAula = aula.LinkAula
         };
     }
 
-    public static Aula ToEntity(this AulaCadastro aulaCadastro, int cursoId, int educadorId)
+    public static Aula ToEntity(this AulaCadastro aulaCadastro, int cursoId)
     {
         return new Aula
         {
@@ -30,7 +29,7 @@ public static class AulaMapping
             DataInicio = aulaCadastro.DataInicio,
             DataFinal = aulaCadastro.DataFinal,
             CursoId = cursoId,
-            EducadorId = educadorId
+            LinkAula = aulaCadastro.LinkAula
         };
     }
 }

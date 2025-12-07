@@ -8,13 +8,10 @@ public class Aula
     public DateTime DataInicio { get; set; }
     public DateTime DataFinal { get; set; }
 
-    // Relacionamentos
     public int CursoId { get; set; }
     public Curso? Curso { get; set; }
 
-    public int EducadorId { get; set; }
-    public Usuario? Educador { get; set; }
+    public string? LinkAula { get; set; }
 
-    // Auditoria
     public DateTime DataCriacao { get; set; } = DateTime.UtcNow;
 }

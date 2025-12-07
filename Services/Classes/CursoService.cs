@@ -33,7 +33,6 @@ public class CursoService(ICursoRepository cursoRepository) : ICursoService
         {
             Nome = cursoCadastro.Nome,
             Descricao = cursoCadastro.Descricao,
-            CargaHoraria = cursoCadastro.CargaHoraria,
             DataInicio = cursoCadastro.DataInicio,
             DataFim = cursoCadastro.DataFim,
             EducadorId = educadorId,
@@ -52,7 +51,6 @@ public class CursoService(ICursoRepository cursoRepository) : ICursoService
 
         curso.Nome = cursoCadastro.Nome;
         curso.Descricao = cursoCadastro.Descricao;
-        curso.CargaHoraria = cursoCadastro.CargaHoraria;
         curso.DataInicio = cursoCadastro.DataInicio;
         curso.DataFim = cursoCadastro.DataFim;
 
@@ -77,7 +75,6 @@ public class CursoService(ICursoRepository cursoRepository) : ICursoService
             Id = curso.Id,
             Nome = curso.Nome,
             Descricao = curso.Descricao,
-            CargaHoraria = curso.CargaHoraria,
             DataInicio = curso.DataInicio,
             DataFim = curso.DataFim,
             Status = curso.Status,

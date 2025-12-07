@@ -8,7 +8,6 @@ public class AulaResponse
     public DateTime DataInicio { get; set; }
     public DateTime DataFinal { get; set; }
     public int CursoId { get; set; }
-    public int EducadorId { get; set; }
     public string? NomeCurso { get; set; }
-    public string? NomeEducador { get; set; }
+    public string? LinkAula { get; set; }
 }
